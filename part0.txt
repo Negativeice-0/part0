@@ -1,3 +1,4 @@
+```
 sequenceDiagram
     participant browser
     participant server
@@ -25,9 +26,11 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+```
 
 
 
+```
 sequenceDiagram
     participant browser
     participant server
@@ -46,9 +49,9 @@ sequenceDiagram
     activate server
     server-->>browser: the JavaScript file
     deactivate server
+```
 
-
-
+```
 sequenceDiagram
     participant browser
     participant server
@@ -78,5 +81,108 @@ sequenceDiagram
 browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json(database)
 server->>browser: POST the text inputted
 deactivate server
-
+```
     Note right of browser: The browser executes the callback function that renders the notes  
+
+How to use the mermaid javascript api
+
+3. Calling the JavaScript API
+This method can be used with any common web server like Apache, IIS, nginx, node express.
+
+You will also need a text editing tool like Notepad++ to generate a .html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+
+The API works by pulling rendering instructions from the source mermaid.js in order to render diagrams on the page.
+
+Requirements for the Mermaid API.
+When writing the .html file, we give two instructions inside the html code to the web browser:
+
+a. The mermaid code for the diagram we want to create.
+
+b. The importing of mermaid library through the mermaid.esm.mjs or mermaid.esm.min.mjs and the mermaid.initialize() call, which dictates the appearance of diagrams and also starts the rendering process .
+
+a. The embedded mermaid diagram definition inside a <pre class="mermaid">:
+
+html
+<body>
+  Here is a mermaid diagram:
+  <pre class="mermaid">
+        graph TD 
+        A[Client] --> B[Load Balancer] 
+        B --> C[Server01] 
+        B --> D[Server02]
+  </pre>
+</body>
+Notes: Every Mermaid chart/graph/diagram definition, should have separate <pre> tags.
+
+b. The import of mermaid and the mermaid.initialize() call.
+
+mermaid.initialize() call takes all the definitions contained in all the <pre class="mermaid"> tags that it finds in the html body and renders them into diagrams. Example:
+
+html
+<body>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+</body>
+Notes: Rendering in Mermaid is initialized by mermaid.initialize() call. However, doing the opposite lets you control when it starts looking for <pre> tags inside the web page with mermaid.initialize(). This is useful when you think that not all <pre> tags may have loaded on the execution of mermaid.esm.min.mjs file.
+
+startOnLoad is one of the parameters that can be defined by mermaid.initialize()
+
+Parameter	Description	Type	Values
+startOnLoad	Toggle for Rendering upon loading	Boolean	true, false
+Working Examples
+Here is a full working example of the mermaidAPI being called through the CDN:
+
+html
+<html>
+  <body>
+    Here is one mermaid diagram:
+    <pre class="mermaid">
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
+    </pre>
+
+    And here is another:
+    <pre class="mermaid">
+            graph TD 
+            A[Client] -->|tcp_123| B
+            B(Load Balancer) 
+            B -->|tcp_456| C[Server1] 
+            B -->|tcp_456| D[Server2]
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
+Another Option: In this example mermaid.js is referenced in src as a separate JavaScript file, in an example Path.
+
+html
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <pre class="mermaid">
+            graph LR 
+            A --- B 
+            B-->C[fa:fa-ban forbidden] 
+            B-->D(fa:fa-spinner);
+    </pre>
+    <pre class="mermaid">
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
+    </pre>
+    <script type="module">
+      import mermaid from 'The/Path/In/Your/Package/mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
